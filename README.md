@@ -429,10 +429,7 @@ The gateway can be stress-tested using **autocannon**.
 Example:
 
 ```bash
-npx autocannon -m POST http://localhost:3000/process-payment \
--H "Idempotency-Key: test123" \
--H "Content-Type: application/json" \
--b '{"amount":100,"currency":"GHS"}'
+npx autocannon -m POST -H "Idempotency-Key: test123" -H "Content-Type: application/json" -b '{"amount":100,"currency":"GHS"}' http://localhost:3000/process-payment
 ```
 
 This verifies:
