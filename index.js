@@ -14,6 +14,12 @@ app.get('/', (req, res) => {
 // POST /process-payment with idempotency logic
 
 // Exportable handler for test and app use
+
+// In-memory rate limiter: { [key]: [timestamps] }
+const rateLimitWindowMs = 60 * 1000; // 1 minute
+const rateLimitMax = 5;
+const rateLimitMap = new Map();
+
 async function processPaymentHandler(req, res) {
   const key = req.header('Idempotency-Key');
   const bodyString = JSON.stringify(req.body);
@@ -23,6 +29,17 @@ async function processPaymentHandler(req, res) {
   if (!req.body || typeof req.body.amount !== 'number' || !req.body.currency) {
     return res.status(400).json({ error: 'Request body must include amount (number) and currency.' });
   }
+
+  // Rate limiting logic
+  const now = Date.now();
+  let timestamps = rateLimitMap.get(key) || [];
+  // Remove timestamps outside window
+  timestamps = timestamps.filter(ts => now - ts < rateLimitWindowMs);
+  if (timestamps.length >= rateLimitMax) {
+    return res.status(429).json({ error: `Rate limit exceeded: max ${rateLimitMax} requests per minute for this Idempotency-Key.` });
+  }
+  timestamps.push(now);
+  rateLimitMap.set(key, timestamps);
 
   let entry = idempotencyStore.get(key);
   if (entry) {
