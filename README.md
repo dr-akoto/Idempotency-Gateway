@@ -131,3 +131,49 @@ If you miss any of these critical steps, your submission will be **automatically
 ---
 **Ready?**
 If you checked all the boxes above, submit your repository link in the application form. Good luck! 🚀
+# Idempotency-Gateway (Pay-Once Protocol)
+
+> Professional Node.js/Express implementation for FinSafe Transactions Ltd.
+
+## Architecture Diagram
+
+![Sequence Diagram](./docs/sequence-diagram.png)
+
+## Setup Instructions
+
+1. Clone the repo and install dependencies:
+     ```sh
+     git clone <your-fork-url>
+     cd Idempotency-Gateway
+     npm install
+     ```
+2. Start the server:
+     ```sh
+     npm run dev
+     # or
+     npm start
+     ```
+
+## API Documentation
+
+### POST /process-payment
+- **Headers:**
+    - `Idempotency-Key: <unique-string>` (required)
+- **Body:**
+    - JSON: `{ "amount": 100, "currency": "GHS" }`
+- **Responses:**
+    - `201 Created` or `200 OK`: `{ "status": "Charged 100 GHS" }`
+    - `409`/`422`: Key reused with different body
+    - `X-Cache-Hit: true` header for duplicate requests
+
+## Design Decisions
+- In-memory store for idempotency (can swap for Redis/DB)
+- Handles in-flight requests (race condition safe)
+- Professional error handling and logging
+
+## Developer's Choice
+- [Describe your extra feature here]
+
+---
+
+_Replace this placeholder with your actual diagram and feature description before submission._
