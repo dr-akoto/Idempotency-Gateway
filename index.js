@@ -12,7 +12,9 @@ app.get('/', (req, res) => {
 });
 
 // POST /process-payment with idempotency logic
-app.post('/process-payment', async (req, res) => {
+
+// Exportable handler for test and app use
+async function processPaymentHandler(req, res) {
   const key = req.header('Idempotency-Key');
   const bodyString = JSON.stringify(req.body);
   if (!key) {
@@ -58,8 +60,17 @@ app.post('/process-payment', async (req, res) => {
     resolvePromise(response);
     res.status(response.statusCode).json(response.body);
   }, 2000);
-});
+}
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+app.post('/process-payment', processPaymentHandler);
+
+
+// Only start server if run directly (not required by test)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
+
+// Export for testing
+module.exports = { app, processPaymentHandler };
