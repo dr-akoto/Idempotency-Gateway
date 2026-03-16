@@ -135,9 +135,10 @@ If you checked all the boxes above, submit your repository link in the applicati
 
 > Professional Node.js/Express implementation for FinSafe Transactions Ltd.
 
+
 ## Architecture Diagram
 
-![Sequence Diagram](./docs/sequence-diagram.png)
+![Sequence Diagram](./IMAGE/Payment%20Processing-sequence-Diagram.png)
 
 ## Setup Instructions
 
